@@ -375,6 +375,7 @@ do
   require('tokyonight').setup {
     styles = {
       comments = { italic = false }, -- Disable italics in comments
+      keywords = { italic = false }, -- Fix a weird bug with box highlighting of keywords
     },
   }
 

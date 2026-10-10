@@ -1,89 +1,3 @@
---[[
-
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-========                                    .-----.          ========
-========         .----------------------.   | === |          ========
-========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||   KICKSTART.NVIM   ||   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||                    ||   |-----|          ========
-========         ||:Tutor              ||   |:::::|          ========
-========         |'-..................-'|   |____o|          ========
-========         `"")----------------(""`   ___________      ========
-========        /::::::::::|  |::::::::::\  \ no mouse \     ========
-========       /:::========|  |==hjkl==:::\  \ required \    ========
-========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
-========                                                     ========
-=====================================================================
-=====================================================================
-
-What is Kickstart?
-
-  Kickstart.nvim is *not* a distribution.
-
-  Kickstart.nvim is a starting point for your own configuration.
-    The goal is that you can read every line of code, top-to-bottom, understand
-    what your configuration is doing, and modify it to suit your needs.
-
-    Once you've done that, you can start exploring, configuring and tinkering to
-    make Neovim your own! That might mean leaving Kickstart just the way it is for a while
-    or immediately breaking it into modular pieces. It's up to you!
-
-    If you don't know anything about Lua, I recommend taking some time to read through
-    a guide. One possible example which will only take 10-15 minutes:
-      - https://learnxinyminutes.com/docs/lua/
-
-    After understanding a bit more about Lua, you can use `:help lua-guide` as a
-    reference for how Neovim integrates Lua.
-    - :help lua-guide
-    - (or HTML version): https://neovim.io/doc/user/lua-guide.html
-
-Kickstart Guide:
-
-  TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
-
-    If you don't know what this means, type the following:
-      - <escape key>
-      - :
-      - Tutor
-      - <enter key>
-
-    (If you already know the Neovim basics, you can skip this step.)
-
-  Once you've completed that, you can continue working through **AND READING** the rest
-  of the kickstart init.lua.
-
-  Next, run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
-
-    This should be the first place you go to look when you're stuck or confused
-    with something. It's one of my favorite Neovim features.
-
-    MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
-    which is very useful when you're not exactly sure of what you're looking for.
-
-  I have left several `:help X` comments throughout the init.lua
-    These are hints about where to find more information about the relevant settings,
-    plugins or Neovim features used in Kickstart.
-
-   NOTE: Look for lines like this
-
-    Throughout the file. These are for you, the reader, to help you understand what is happening.
-    Feel free to delete them once you know what you're doing, but they should serve as a guide
-    for when you are first encountering a few different constructs in your Neovim config.
-
-If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now! :)
---]]
-
 -- ============================================================
 -- SECTION 1: OPTIONS
 -- Core Neovim settings, leaders, options
@@ -110,7 +24,13 @@ do
   vim.o.number = true
   -- You can also add relative line numbers, to help with jumping.
   --  Experiment for yourself to see if you like it!
-  -- vim.o.relativenumber = true
+  vim.o.relativenumber = true
+
+  -- Tabs
+  vim.o.tabstop = 4
+  vim.o.shiftwidth = 4
+  vim.o.expandtab = true
+  vim.bo.softtabstop = 1
 
   -- Enable mouse mode, can be useful for resizing splits for example!
   vim.o.mouse = 'a'
@@ -183,6 +103,7 @@ do
 
   -- Clear highlights on search when pressing <Esc> in normal mode
   --  See `:help hlsearch`
+  vim.o.hlsearch = true
   vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
   -- Diagnostic Config & Keymaps
@@ -209,7 +130,12 @@ do
     },
   }
 
+  vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
   vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+
+  -- Increment/decrement
+  vim.keymap.set('n', '+', '<C-a>', { desc = 'Increment numbers', noremap = true })
+  vim.keymap.set('n', '-', '<C-x>', { desc = 'Decrement numbers', noremap = true })
 
   -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
   -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -220,19 +146,31 @@ do
   vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
   -- TIP: Disable arrow keys in normal mode
-  -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
-  -- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
-  -- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
-  -- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+  vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+  vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+  vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+  vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+
+  -- Splits
+  vim.keymap.set('n', '<leader>v', '<C-w>v', { desc = 'Split the window vertically' })
+  vim.keymap.set('n', '<leader>-', '<C-w>s', { desc = 'Split the window horizontally' })
 
   -- Keybinds to make split navigation easier.
   --  Use CTRL+<hjkl> to switch between windows
   --
   --  See `:help wincmd` for a list of all window commands
-  vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-  vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-  vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-  vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+  vim.keymap.set('n', '<leader>h', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+  vim.keymap.set('n', '<leader>l', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+  vim.keymap.set('n', '<leader>j', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+  vim.keymap.set('n', '<leader>k', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+  vim.keymap.set('n', '<leader>x', ':x<CR>', { desc = '' })
+  vim.keymap.set('n', '<leader>w', ':w<CR>', { desc = '' })
+
+  vim.keymap.set('v', '<S-j>', ":m '>+1<CR>gv=gv")
+  vim.keymap.set('v', '<S-k>', ":m '<-2<CR>gv=gv")
+  vim.keymap.set('v', '<S-h>', '<gv')
+  vim.keymap.set('v', '<S-l>', '>gv')
 
   -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
   -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -346,6 +284,15 @@ do
   vim.pack.add { gh 'NMAC427/guess-indent.nvim' }
   require('guess-indent').setup {}
 
+  -- Specifically for block comments
+  vim.pack.add { gh 'numToStr/Comment.nvim' }
+  ---@diagnostic disable-next-line: missing-fields
+  require('Comment').setup {
+    opts = {
+      toggler = { line = 'gc', block = 'gb' },
+    },
+  }
+
   -- Here is a more advanced configuration example that passes options to `gitsigns.nvim`
   --
   -- See `:help gitsigns` to understand what each configuration key does.
@@ -406,7 +353,7 @@ do
   vim.pack.add { gh 'folke/which-key.nvim' }
   require('which-key').setup {
     -- Delay between pressing a key and opening which-key (milliseconds)
-    delay = 0,
+    delay = 100,
     icons = { mappings = vim.g.have_nerd_font },
     -- Document existing key chains
     spec = {
@@ -471,7 +418,28 @@ do
   -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
   -- - sd'   - [S]urround [D]elete [']quotes
   -- - sr)'  - [S]urround [R]eplace [)] [']
-  require('mini.surround').setup()
+  require('mini.surround').setup {
+    mappings = {
+      add = 'ys',
+      delete = 'ds',
+      find = '',
+      find_left = '',
+      highlight = '',
+      replace = 'cs',
+      update_n_lines = '',
+
+      -- Add this only if you don't want to use extended mappings
+      suffix_last = '',
+      suffix_next = '',
+    },
+    search_method = 'cover_or_next',
+  }
+  -- Auto-closes brackets, quotes, etc.
+  require('mini.pairs').setup {}
+
+  -- Remap adding surrounding to Visual mode selection
+  vim.keymap.del('x', 'ys')
+  vim.keymap.set('x', 'S', [[:<C-u>lua MiniSurround.add('visual')<CR>]], { silent = true })
 
   -- Simple and easy statusline.
   --  You could remove this setup call if you don't like it,
@@ -534,13 +502,27 @@ do
   require('telescope').setup {
     -- You can put your default mappings / updates / etc. in here
     --  All the info you're looking for is in `:help telescope.setup()`
-    --
-    -- defaults = {
-    --   mappings = {
-    --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-    --   },
-    -- },
-    -- pickers = {}
+    defaults = {
+      file_ignore_patterns = { '.cache', 'compile_commands.json' },
+      layout_strategy = 'flex',
+      layout_config = { height = 0.95 },
+      preview = {
+        hide_on_startup = false, -- hide previewer when picker starts
+      },
+    },
+    pickers = {
+      layout_config = {
+        preview_cutoff = 1,
+      },
+      colorscheme = {
+        enable_preview = true,
+      },
+      find_files = {
+        hidden = true,
+        no_ignore = true,
+        no_ignore_parent = true,
+      },
+    },
     extensions = {
       ['ui-select'] = { require('telescope.themes').get_dropdown() },
     },
@@ -554,10 +536,10 @@ do
   local builtin = require 'telescope.builtin'
   vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
   vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-  vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+  vim.keymap.set('n', '<leader>f', builtin.find_files, { desc = '[S]earch [F]iles' })
   vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
   vim.keymap.set({ 'n', 'v' }, '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-  vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+  vim.keymap.set('n', '<leader>p', builtin.live_grep, { desc = '[S]earch by [G]rep' })
   vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
   vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
   vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
@@ -581,7 +563,7 @@ do
       -- Jump to the definition of the word under your cursor.
       -- This is where a variable was first declared, or where a function is defined, etc.
       -- To jump back, press <C-t>.
-      vim.keymap.set('n', 'grd', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
+      vim.keymap.set('n', 'gd', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
 
       -- Fuzzy find all the symbols in your current document.
       -- Symbols are things like variables, functions, types, etc.
@@ -685,9 +667,13 @@ do
       -- or a suggestion from your LSP for this to activate.
       map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
 
+      -- Opens a popup that displays documentation about the word under your cursor
+      --  See `:help K` for why this keymap.
+      map('gh', vim.lsp.buf.hover, 'Hover Documentation')
+
       -- WARN: This is not Goto Definition, this is Goto Declaration.
       --  For example, in C this would take you to the header.
-      map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+      map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
       -- The following two autocommands are used to highlight references of the
       -- word under your cursor when your cursor rests there for a little while.
@@ -733,9 +719,9 @@ do
   --  See `:help lsp-config` for information about keys and how to configure
   ---@type table<string, vim.lsp.Config>
   local servers = {
-    -- clangd = {},
+    clangd = {},
     -- gopls = {},
-    -- pyright = {},
+    pyright = {},
     -- tsc = {},
     --
     -- Some languages (like rust) have entire language plugins that can be useful:
@@ -820,6 +806,7 @@ end
 -- ============================================================
 do
   -- [[ Formatting ]]
+  -- TODO: configure formatting styles for each language
   vim.pack.add { gh 'stevearc/conform.nvim' }
   require('conform').setup {
     notify_on_error = false,
@@ -849,7 +836,7 @@ do
     },
   }
 
-  vim.keymap.set({ 'n', 'v' }, '<leader>f', function() require('conform').format { async = true } end, { desc = '[F]ormat buffer' })
+  vim.keymap.set({ 'n', 'v' }, '<leader>m', function() require('conform').format { async = true } end, { desc = '[F]ormat buffer' })
 end
 
 -- ============================================================
@@ -1037,3 +1024,21 @@ end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+-- TODO: decide where to put those
+vim.pack.add { gh 'fpeterek/nvim-surfers' }
+---@diagnostic disable-next-line: missing-fields
+require('nvim-surfers').setup {
+  use_tmux = true,
+}
+
+-- NOTE: if some problems arise it's probably something to do with npm/yarn not being installed or smth
+vim.pack.add { gh 'iamcco/markdown-preview.nvim' }
+local app_dir = vim.fn.stdpath('data') .. '/site/pack/core/opt/markdown-preview.nvim/app'
+if vim.fn.isdirectory(app_dir) == 1 and vim.fn.isdirectory(app_dir .. '/node_modules') == 0 then
+  vim.fn.system({ 'sh', '-c', 'cd ' .. vim.fn.shellescape(app_dir) .. ' && (yarn install || npm install)' })
+end
+
+vim.g.mkdp_filetypes = { 'markdown' }
+-- Optional keymap to toggle preview
+vim.keymap.set('n', '<leader>mp', '<cmd>MarkdownPreviewToggle<CR>', { desc = 'Toggle Markdown Preview' })

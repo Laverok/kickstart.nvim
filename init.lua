@@ -837,7 +837,7 @@ do
     },
   }
 
-  vim.keymap.set({ 'n', 'v' }, '<leader>m', function() require('conform').format { async = true } end, { desc = '[F]ormat buffer' })
+  vim.keymap.set({ 'n', 'v' }, '<leader>b', function() require('conform').format { async = true } end, { desc = 'Format [B]uffer' })
 end
 
 -- ============================================================

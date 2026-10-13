@@ -828,12 +828,29 @@ do
     },
     -- You can also specify external formatters in here.
     formatters_by_ft = {
-      -- rust = { 'rustfmt' },
-      -- Conform can also run multiple formatters sequentially
-      -- python = { "isort", "black" },
-      --
-      -- You can use 'stop_after_first' to run the first available formatter from the list
-      -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      -- NOTE: Requires clang-format installed on the machine
+      c = { 'clang-format' },
+      cpp = { 'clang-format' },
+      python = { 'ruff_format' }, -- NOTE: pipx install ruff
+    },
+    formatters = {
+      ['clang-format'] = {
+        prepend_args = {
+          '--style={BasedOnStyle: LLVM, IndentWidth: 4, TabWidth: 4, UseTab: Never}',
+        },
+      },
+      ['ruff_format'] = {
+        prepend_args = {
+          '--config',
+          'indent-width=4',
+          '--config',
+          'line-length=88',
+          '--config',
+          "format.indent-style='space'",
+          '--config',
+          "format.quote-style='double'",
+        },
+      },
     },
   }
 
@@ -885,9 +902,9 @@ do
       --
       -- See `:help blink-cmp-config-keymap` for defining your own keymap
       preset = 'super-tab',
-      ["<Tab>"] = { "select_next", "fallback" },
-      ["<S-Tab>"] = { "select_prev", "fallback" },
-      ["<CR>"] = { "select_and_accept", "fallback" },
+      ['<Tab>'] = { 'select_next', 'fallback' },
+      ['<S-Tab>'] = { 'select_prev', 'fallback' },
+      ['<CR>'] = { 'select_and_accept', 'fallback' },
       -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
       --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
     },
@@ -1037,9 +1054,9 @@ require('nvim-surfers').setup {
 
 -- NOTE: if some problems arise it's probably something to do with npm/yarn not being installed or smth
 vim.pack.add { gh 'iamcco/markdown-preview.nvim' }
-local app_dir = vim.fn.stdpath('data') .. '/site/pack/core/opt/markdown-preview.nvim/app'
+local app_dir = vim.fn.stdpath 'data' .. '/site/pack/core/opt/markdown-preview.nvim/app'
 if vim.fn.isdirectory(app_dir) == 1 and vim.fn.isdirectory(app_dir .. '/node_modules') == 0 then
-  vim.fn.system({ 'sh', '-c', 'cd ' .. vim.fn.shellescape(app_dir) .. ' && (yarn install || npm install)' })
+  vim.fn.system { 'sh', '-c', 'cd ' .. vim.fn.shellescape(app_dir) .. ' && (yarn install || npm install)' }
 end
 
 vim.g.mkdp_filetypes = { 'markdown' }
